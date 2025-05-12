@@ -17,6 +17,13 @@ from urllib import request
 
 
 ########################################
+########################################
+# команды для того чтобы скачать все нужные библитеки
+# pip install flask
+# pip install flask-login
+# pip install sqlalchemy
+# pip install flask-wtf
+########################################
 
 app = Flask(__name__)
 login_manager = LoginManager()
