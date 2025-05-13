@@ -152,7 +152,7 @@ def edit_news(id):
 @login_required
 def news_delete(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id,
+    news = db_sess.query(News).filter(News.user_id == id,
                                       News.user == flask_login.current_user
                                       ).first()
     if news:
@@ -166,6 +166,14 @@ def news_delete(id):
 @app.route("/inf")
 def inf():
     return render_template('inf.html')
+
+
+@app.route("/my_blogs/<int:user_id>")
+def my_blogs(user_id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.user_id == user_id,
+                                      News.user == flask_login.current_user)
+    return render_template("index.html", news=news)
 
 
 if __name__ == '__main__':
