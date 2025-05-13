@@ -18,5 +18,7 @@ class News(SqlAlchemyBase):
 
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
+    # game_title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    # game_genre = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     user = orm.relationship('User')
     # comments = orm.relationship('Comment')

@@ -1,5 +1,7 @@
 import flask_login
 from flask import Flask, render_template, redirect, abort
+from sqlalchemy.sql.operators import from_
+
 from data import db_session
 from data.users import User
 from data.news import News
@@ -106,6 +108,8 @@ def add_news():
         news.title = form.title.data
         news.content = form.content.data
         news.is_private = form.is_private.data
+        # news.game_title = form.game_title.data
+        # news.game_genre = form.game_genre.data
         flask_login.current_user.news.append(news)
         db_sess.merge(flask_login.current_user)
         db_sess.commit()
@@ -182,6 +186,11 @@ def all_blogs():
     news = db_sess.query(News)
     return render_template("index.html", news=news)
 
+
+# @app.route("/games")
+# def games_catalog():
+#     pass
+#
 
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
