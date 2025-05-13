@@ -176,6 +176,13 @@ def my_blogs(user_id):
     return render_template("index.html", news=news)
 
 
+@app.route("/all_blogs")
+def all_blogs():
+    db_sess = db_session.create_session()
+    news = db_sess.query(News)
+    return render_template("index.html", news=news)
+
+
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
     app.run(port=8080, host='127.0.0.1')

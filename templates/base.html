@@ -39,6 +39,12 @@
 <!--<header class="intro-header" style="background-image: url('/static/img/home.png')"></header>-->
 <!--<img src="/static/img/home.png"-->
 <!--           alt="здесь должна была быть картинка, но не нашлась">-->
+{% if current_user.is_authenticated %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Вы вошли в аккаунт, {{current_user.name}}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>

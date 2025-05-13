@@ -6,9 +6,9 @@
     <a href="/inf" class="btn btn-primary active" aria-current="page">Информация о проекте</a>
     {% if current_user.is_authenticated %}
     <a href="/news" class="btn btn-primary active" aria-current="page">Добавить новости</a>
-    <a href= "/my_blogs/{{ current_user.id }}" class="btn btn-primary active" aria-current="page">Мои блоги</a>
+    <a href="/my_blogs/{{ current_user.id }}" class="btn btn-primary active" aria-current="page">Мои блоги</a>
     {% endif %}
-    <a href="#" class="btn btn-primary" aria-current="page">Блоги всех пользователей</a>
+    <a href="/all_blogs" class="btn btn-primary active" aria-current="page">Блоги всех пользователей</a>
 </div>
 <h1>Записи в блоге</h1>
 <!--<div class="col-md-4 col-lg-offset-4">-->
@@ -16,10 +16,6 @@
 {% for item in news%}
 <div class="col-md6 border rounded">
     {% if current_user.is_authenticated %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Вы вошли в аккаунт, {{current_user.name}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
     {% endif %}
     {% if current_user.is_authenticated and current_user == item.user %}
     <div>
