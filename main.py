@@ -1,5 +1,5 @@
 import flask_login
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, abort
 from data import db_session
 from data.users import User
 from data.news import News
@@ -24,7 +24,7 @@ from urllib import request
 # pip install sqlalchemy
 # pip install flask-wtf
 ########################################
-
+# НАПИСАТЬ ОПИСАНИЕ В inf.html
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -127,8 +127,8 @@ def edit_news(id):
             form.title.data = news.title
             form.content.data = news.content
             form.is_private.data = news.is_private
-        # else:
-        #     abort(404)
+        else:
+            abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         news = db_sess.query(News).filter(News.id == id,
@@ -140,8 +140,8 @@ def edit_news(id):
             news.is_private = form.is_private.data
             db_sess.commit()
             return redirect('/')
-        # else:
-        #     abort(404)
+        else:
+            abort(404)
     return render_template('news.html',
                            title='Редактирование новости',
                            form=form
@@ -161,6 +161,11 @@ def news_delete(id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route("/inf")
+def inf():
+    return render_template('inf.html')
 
 
 if __name__ == '__main__':
