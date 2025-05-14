@@ -1,5 +1,5 @@
 import flask_login
-from flask import Flask, render_template, redirect, abort
+from flask import Flask, render_template, redirect, abort, request
 from sqlalchemy.sql.operators import from_
 
 from data import db_session
@@ -11,7 +11,6 @@ from flask_login import LoginManager, login_required, logout_user, login_user
 from forms.login import LoginForm
 from forms.news import NewsForm
 import requests
-from urllib import request
 
 ########################################
 
