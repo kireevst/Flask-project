@@ -18,6 +18,16 @@
             Удалить
         </a>
     </div>
+    <div class="btn-group">
+        <a href="/like/{{item.id}}" class="btn btn-success">Like</a>
+        <div class="alert alert-success" role="alert">
+            {{item.likes}}
+        </div>
+        <a href="/dislike/{{item.id}}" class="btn btn-danger">Dislike</a>
+        <div class="alert alert-danger" role="alert">
+            {{item.dislikes}}
+        </div>
+    </div>
     {% endif %}
     <h2>{{item.title}}</h2>
     <div>
