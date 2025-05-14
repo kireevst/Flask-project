@@ -36,6 +36,8 @@
     <div>
         Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
     </div>
+    <a class="btn btn-primary" href="/commentaries/{{item.id}}" role="button">Комментарии</a>
+
 </div>
 {% endfor %}
 {% endblock %}

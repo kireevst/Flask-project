@@ -6,20 +6,13 @@ from data import db_session
 from data.comment import Comments
 from data.users import User
 from data.news import News
+from forms.comment import CommentForm
 from forms.user import RegisterForm
 from flask_login import LoginManager, login_required, logout_user, login_user
 from forms.login import LoginForm
 from forms.news import NewsForm
 import requests
 
-########################################
-
-
-# работает все кроме изменения новостей
-
-
-########################################
-########################################
 # команды для того чтобы скачать все нужные библитеки
 # pip install flask
 # pip install flask-login
@@ -259,6 +252,34 @@ def dislike(id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route("/commentaries/<int:id>")
+@login_required
+def commentaries(id):
+    db_sess = db_session.create_session()
+    comments = db_sess.query(Comments).filter(Comments.news_id == id).first()
+    if comments:
+        return render_template("comment.html", comment=comments)
+    else:
+        return redirect("/")
+
+
+@app.route("/write_comment/<int:id>", methods=['GET', 'POST'])
+@login_required
+def write_comment(id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        comments = Comments()
+        comments.content = form.content.data
+        flask_login.current_user.news[id - 1].comments.append(comments)
+        db_sess.merge(flask_login.current_user)
+        db_sess.commit()
+        # return redirect("/")
+        return redirect(f'/commentaries/{id}')
+    return render_template('comments.html', title='Добавление новости',
+                           form=form)
 
 
 # @app.route("/games")
