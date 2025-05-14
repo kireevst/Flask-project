@@ -1,6 +1,9 @@
 import flask_login
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, abort
+from sqlalchemy.sql.operators import from_
+
 from data import db_session
+from data.comment import Comments
 from data.users import User
 from data.news import News
 from forms.user import RegisterForm
@@ -17,7 +20,14 @@ from urllib import request
 
 
 ########################################
-
+########################################
+# команды для того чтобы скачать все нужные библитеки
+# pip install flask
+# pip install flask-login
+# pip install sqlalchemy
+# pip install flask-wtf
+########################################
+# НАПИСАТЬ ОПИСАНИЕ В inf.html
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -28,11 +38,9 @@ app.config['SECRET_KEY'] = 'mt19937'
 def index():
     db_sess = db_session.create_session()
     if flask_login.current_user.is_authenticated:
-        news = db_sess.query(News).filter(
-            (News.user == flask_login.current_user) | (News.is_private != True))
+        news = db_sess.query(News).filter(News.approved == True)
     else:
         news = db_sess.query(News).filter(News.is_private != True)
-    # news = db_sess.query(News).filter(News.is_private != True)
     return render_template("index.html", news=news)
 
 
@@ -99,6 +107,11 @@ def add_news():
         news.title = form.title.data
         news.content = form.content.data
         news.is_private = form.is_private.data
+        if flask_login.current_user.is_admin:
+            news.approved = True
+            news.is_checked = True
+        # news.game_title = form.game_title.data
+        # news.game_genre = form.game_genre.data
         flask_login.current_user.news.append(news)
         db_sess.merge(flask_login.current_user)
         db_sess.commit()
@@ -120,8 +133,8 @@ def edit_news(id):
             form.title.data = news.title
             form.content.data = news.content
             form.is_private.data = news.is_private
-        # else:
-        #     abort(404)
+        else:
+            abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         news = db_sess.query(News).filter(News.id == id,
@@ -133,8 +146,8 @@ def edit_news(id):
             news.is_private = form.is_private.data
             db_sess.commit()
             return redirect('/')
-        # else:
-        #     abort(404)
+        else:
+            abort(404)
     return render_template('news.html',
                            title='Редактирование новости',
                            form=form
@@ -156,6 +169,110 @@ def news_delete(id):
     return redirect('/')
 
 
+@app.route("/inf")
+def inf():
+    return render_template('inf.html')
+
+
+@app.route("/my_blogs/<int:user_id>")
+def my_blogs(user_id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.user_id == user_id,
+                                      News.user == flask_login.current_user)
+    return render_template("my_blogs.html", news=news)
+
+
+@app.route("/all_blogs")
+def all_blogs():
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.approved == True)
+    return render_template("index.html", news=news)
+
+
+@app.route("/admin_mode")
+def admin_mode():
+    return render_template("admin.html")
+
+
+@app.route('/news_ban/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_ban(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.is_banned = True
+        news.is_checked = True
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/check_commentaries')
+
+
+@app.route('/news_approve/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_approve(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.approved = True
+        news.is_checked = True
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/check_commentaries')
+
+
+@app.route("/check_commentaries")
+def check_commentaries():
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.is_checked == False)
+    return render_template("news_check_admin.html", news=news)
+
+
+@app.route('/like/<int:id>', methods=['GET', 'POST'])
+@login_required
+def like(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.likes += 1
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
+@app.route('/dislike/<int:id>', methods=['GET', 'POST'])
+@login_required
+def dislike(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.dislikes += 1
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
+# @app.route("/games")
+# def games_catalog():
+#     pass
+#
+
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
+    db_sess = db_session.create_session()
+    # admin = User()
+    # admin.is_admin = True
+    # admin.name = "kireevst"
+    # admin.email = "kireevstepan11@gmail.com"
+    # admin.set_password("password")
+    # admin.about = ""
+    # db_sess.add(admin)
+    # db_sess.commit()
     app.run(port=8080, host='127.0.0.1')
