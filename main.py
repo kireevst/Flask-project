@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, abort
 from sqlalchemy.sql.operators import from_
 
 from data import db_session
+from data.comment import Comments
 from data.users import User
 from data.news import News
 from forms.user import RegisterForm
