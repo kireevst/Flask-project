@@ -10,6 +10,8 @@ class News(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
+    likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,

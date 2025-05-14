@@ -233,6 +233,34 @@ def check_commentaries():
     return render_template("news_check_admin.html", news=news)
 
 
+@app.route('/like/<int:id>', methods=['GET', 'POST'])
+@login_required
+def like(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.likes += 1
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
+@app.route('/dislike/<int:id>', methods=['GET', 'POST'])
+@login_required
+def dislike(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id
+                                      ).first()
+    if news:
+        news.dislikes += 1
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
 # @app.route("/games")
 # def games_catalog():
 #     pass
