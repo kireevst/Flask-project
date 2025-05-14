@@ -1,0 +1,27 @@
+{% extends "admin.html" %}
+
+{% block content %}
+
+<h1>Записи в блоге</h1>
+<!--<div class="col-md-4 col-lg-offset-4">-->
+<!--</div>-->
+{% for item in news%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+    </div>
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+    <div>
+        <a href="/news_ban/{{ item.id }}" class="btn btn-danger">
+            Бан
+        </a>
+        <a href="/news_approve/{{ item.id }}" class="btn btn-success">
+            Одобрить
+        </a>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

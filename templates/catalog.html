@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог игр{% endblock %}
+
+{% block content %}
+<div class="catalog-header">
+    <h1><i class="fas fa-gamepad"></i> Каталог игр</h1>
+</div>
+
+<div class="games-grid">
+    {% for game in games %}
+    <div class="game-card">
+        <div class="game-image">
+            <img src="{{ url_for('static', filename='uploads/' + game.image) }}" alt="{{ game.title }}">
+            <span class="platform-badge">{{ game.platform }}</span>
+        </div>
+        <div class="game-info">
+            <h3>{{ game.title }}</h3>
+            <p class="game-genre">{{ game.genre }}</p>
+            <p class="game-description">{{ game.description|truncate(100) }}</p>
+            <div class="game-footer">
+                <span class="price">{{ game.price }} руб.</span>
+                <a href="{{ url_for('game_details', game_id=game.id) }}" class="btn btn-sm">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-results">
+        <p>Игры не найдены. Попробуйте изменить параметры фильтрации.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

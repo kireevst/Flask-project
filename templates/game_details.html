@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.title }}{% endblock %}
+
+{% block content %}
+<div class="game-details">
+    <div class="game-details-header">
+        <h1>{{ game.title }}</h1>
+        <div class="game-meta">
+            <span class="platform">{{ game.platform }}</span>
+            <span class="genre">{{ game.genre }}</span>
+            <span class="release-date">Дата выхода: {{ game.release_date.strftime('%d.%m.%Y') }}</span>
+        </div>
+    </div>
+
+    <div class="game-details-content">
+        <div class="game-image">
+            <img src="{{ url_for('static', filename='uploads/' + game.image) }}" alt="{{ game.title }}">
+        </div>
+        <div class="game-info">
+            <div class="price-section">
+                <span class="price">{{ game.price }} руб.</span></div>
+            <div class="price-section">
+                {% if current_user.is_authenticated %}
+                {% set user_has_game = Order.query.filter_by(user_id=current_user.id, game_id=game.id).first() %}
+                {% if user_has_game %}
+                <button class="btn btn-success" disabled>Уже в вашей библиотеке</button>
+                {% else %}
+                <form method="POST" action="{{ url_for('buy_game', game_id=game.id) }}">
+                    <button type="submit" class="btn btn-primary">Купить</button>
+                </form>
+                {% endif %}
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Войдите, чтобы купить</a>
+                {% endif %}
+            </div>
+
+            <div class="game-description">
+                <h3>Описание</h3>
+                <p>{{ game.description }}</p>
+            </div>
+
+            <div class="game-specs">
+                <h3>Характеристики</h3>
+                <ul>
+                    <li><strong>Платформа:</strong> {{ game.platform }}</li>
+                    <li><strong>Жанр:</strong> {{ game.genre }}</li>
+                    <li><strong>Дата выхода:</strong> {{ game.release_date.strftime('%d.%m.%Y') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="similar-games">
+    <h2>Похожие игры</h2>
+    <div class="games-grid">
+        {% for similar in Game.query.filter(Game.genre==game.genre, Game.id!=game.id).limit(4).all() %}
+        <div class="game-card">
+            <div class="game-image">
+                <img src="{{ url_for('static', filename='uploads/' + similar.image) }}" alt="{{ similar.title }}">
+                <span class="platform-badge">{{ similar.platform }}</span>
+            </div>
+            <div class="game-info">
+                <h3>{{ similar.title }}</h3>
+                <p class="game-genre">{{ similar.genre }}</p>
+                <div class="game-footer">
+                    <span class="price">{{ similar.price }} руб.</span>
+                    <a href="{{ url_for('game_details', game_id=similar.id) }}" class="btn btn-sm">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
