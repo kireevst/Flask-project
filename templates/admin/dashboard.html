@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Админ-панель{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <h1><i class="fas fa-tachometer-alt"></i> Админ-панель</h1>
+    
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Статьи на модерации</h3>
+                <p>{{ pending_articles }}</p>
+                <a href="{{ url_for('admin_articles') }}">Просмотреть</a>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Всего заказов</h3>
+                <p>{{ total_orders }}</p>
+                <a href="{{ url_for('admin_orders') }}">Просмотреть</a>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Игр в каталоге</h3>
+                <p>{{ total_games }}</p>
+                <a href="{{ url_for('admin_games') }}">Просмотреть</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-quick-actions">
+        <h2>Быстрые действия</h2>
+        <div class="actions-grid">
+            <a href="{{ url_for('add_news') }}" class="action-card">
+                <i class="fas fa-plus"></i>
+                <span>Добавить новость</span>
+            </a>
+            <a href="{{ url_for('add_game') }}" class="action-card">
+                <i class="fas fa-gamepad"></i>
+                <span>Добавить игру</span>
+            </a>
+            <a href="{{ url_for('admin_articles') }}" class="action-card">
+                <i class="fas fa-file-alt"></i>
+                <span>Модерация статей</span>
+            </a>
+            <a href="{{ url_for('admin_orders') }}" class="action-card">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Управление заказами</span>
+            </a>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

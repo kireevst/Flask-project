@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Написать статью{% endblock %}
+
+{% block content %}
+<div class="create-article">
+    <h1><i class="fas fa-pen"></i> Написать статью</h1>
+    
+    <form method="POST" action="{{ url_for('create_article') }}" class="article-form">
+        <div class="form-group">
+            <label for="title">Заголовок</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="content">Содержание</label>
+            <textarea id="content" name="content" rows="15" required></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Опубликовать</button>
+            <a href="{{ url_for('forum') }}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+    
+    <div class="article-guidelines">
+        <h3>Правила публикации статей:</h3>
+        <ul>
+            <li>Статьи должны быть связаны с видеоиграми</li>
+            <li>Запрещены оскорбления и ненормативная лексика</li>
+            <li>Плагиат не допускается</li>
+            <li>Все статьи проходят модерацию</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

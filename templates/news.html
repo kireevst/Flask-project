@@ -1,29 +1,37 @@
 {% extends "base.html" %}
 
+{% block title %}Новости{% endblock %}
+
 {% block content %}
-<h1>Добавление новости</h1>
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.title.label }}<br>
-        {{ form.title(class="form-control") }}<br>
-        {% for error in form.title.errors %}
-    <p class="alert alert-danger" role="alert">
-        {{ error }}
-    </p>
-    {% endfor %}
-    </p>
-    <p>
-        {{ form.content.label }}<br>
-        {{ form.content(class="form-control") }}<br>
-        {% for error in form.content.errors %}
-    <p content="alert alert-danger" role="alert">
-        {{ error }}
-    </p>
-    {% endfor %}
-    </p>
-    <p>{{ form.is_private() }} {{ form.is_private.label }}</p>
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    {{message}}
-</form>
+<div class="news-page">
+    <div class="page-header">
+        <h1><i class="fas fa-newspaper"></i> Новости игрового мира</h1>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('add_news') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить новость</a>
+        {% endif %}
+    </div>
+
+    <div class="news-list">
+        {% for news_item in news_list %}
+        <article class="news-item">
+            <div class="news-image">
+                <img src="{{ url_for('static', filename='uploads/' + news_item.image) if news_item.image else url_for('static', filename='images/default-news.jpg') }}" alt="{{ news_item.title }}">
+            </div>
+            <div class="news-content">
+                <h2><a href="{{ url_for('view_news', news_id=news_item.id) }}">{{ news_item.title }}</a></h2>
+                <div class="news-meta">
+                    <span><i class="fas fa-user"></i> {{ news_item.author.username }}</span>
+                    <span><i class="fas fa-calendar-alt"></i> {{ news_item.date_posted.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+                <p>{{ news_item.content|truncate(200) }}</p>
+                <a href="{{ url_for('view_news', news_id=news_item.id) }}" class="btn btn-outline">Читать далее</a>
+            </div>
+        </article>
+        {% else %}
+        <div class="no-news">
+            <p>Новости пока отсутствуют.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

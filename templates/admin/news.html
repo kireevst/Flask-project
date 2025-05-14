@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Управление новостями{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="page-header">
+        <h1><i class="fas fa-newspaper"></i> Управление новостями</h1>
+        <div class="page-actions">
+            <a href="{{ url_for('add_news') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить новость</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+    </div>
+    
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Заголовок</th>
+                    <th>Автор</th>
+                    <th>Дата</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for news_item in news_list %}
+                <tr>
+                    <td>{{ news_item.id }}</td>
+                    <td><a href="{{ url_for('view_news', news_id=news_item.id) }}">{{ news_item.title|truncate(30) }}</a></td>
+                    <td>{{ news_item.author.username }}</td>
+                    <td>{{ news_item.date_posted.strftime('%d.%m.%Y') }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_news', news_id=news_item.id) }}" class="btn btn-sm btn-edit"><i class="fas fa-edit"></i></a>
+                        <a href="{{ url_for('delete_news', news_id=news_item.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту новость?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="no-results">Новости не найдены</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <!-- Здесь будет пагинация -->
+        <a href="#" class="page-link active">1</a>
+        <a href="#" class="page-link">2</a>
+        <a href="#" class="page-link">3</a>
+    </div>
+</div>
+{% endblock %}

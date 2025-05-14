@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Страница не найдена{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-content">
+        <h1><i class="fas fa-exclamation-triangle"></i> 404</h1>
+        <h2>Страница не найдена</h2>
+        <p>Запрошенная вами страница не существует или была перемещена.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">На главную</a>
+    </div>
+</div>
+{% endblock %}

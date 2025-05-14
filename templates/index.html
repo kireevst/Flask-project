@@ -1,41 +1,57 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block title %}Главная{% endblock %}
 
-<h1>Записи в блоге</h1>
-<!--<div class="col-md-4 col-lg-offset-4">-->
-<!--</div>-->
-{% for item in news%}
-<div class="col-md6 border rounded">
-    {% if current_user.is_authenticated %}
-    {% endif %}
-    {% if current_user.is_authenticated and current_user == item.user %}
-    <div>
-        <a href="/news/{{ item.id }}" class="btn btn-warning">
-            Изменить
-        </a>
-        <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
-            Удалить
-        </a>
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h2>Лучшие игры по лучшим ценам</h2>
+        <p>Откройте для себя мир увлекательных приключений и незабываемых впечатлений</p>
+        <a href="{{ url_for('catalog') }}" class="btn btn-primary">В каталог</a>
     </div>
-    {% endif %}
-    <div class="btn-group">
-        <a href="/like/{{item.id}}" class="btn btn-success">Like</a>
-        <div class="alert alert-success" role="alert">
-            {{item.likes}}
+</section>
+
+<section class="featured-news">
+    <h2><i class="fas fa-newspaper"></i> Последние новости</h2>
+    <div class="news-grid">
+        {% for item in news %}
+        <article class="news-card">
+            <div class="news-image">
+                <img src="{{ url_for('static', filename='uploads/' + item.image) if item.image else url_for('static', filename='images/default-news.jpg') }}" alt="{{ item.title }}">
+            </div>
+            <div class="news-content">
+                <h3>{{ item.title }}</h3>
+                <p class="news-meta">Опубликовано: {{ item.date_posted.strftime('%d.%m.%Y') }}</p>
+                <p>{{ item.content|truncate(150) }}</p>
+                <a href="{{ url_for('view_news', news_id=item.id) }}" class="btn btn-outline">Читать далее</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    <div class="text-center">
+        <a href="{{ url_for('news') }}" class="btn">Все новости</a>
+    </div>
+</section>
+
+<section class="featured-games">
+    <h2><i class="fas fa-star"></i> Популярные игры</h2>
+    <div class="games-grid">
+        {% for game in featured_games %}
+        <div class="game-card">
+            <div class="game-image">
+                <img src="{{ url_for('static', filename='uploads/' + game.image) }}" alt="{{ game.title }}">
+                <span class="platform-badge">{{ game.platform }}</span>
+            </div>
+            <div class="game-info">
+                <h3>{{ game.title }}</h3>
+                <p class="game-genre">{{ game.genre }}</p>
+                <div class="game-footer">
+                    <span class="price">{{ game.price }} руб.</span>
+                    <a href="{{ url_for('game_details', game_id=game.id) }}" class="btn btn-sm">Подробнее</a>
+                </div>
+            </div>
         </div>
-        <a href="/dislike/{{item.id}}" class="btn btn-danger">Dislike</a>
-        <div class="alert alert-danger" role="alert">
-            {{item.dislikes}}
-        </div>
+        {% endfor %}
     </div>
-    <h2>{{item.title}}</h2>
-    <div>
-        {{item.content}}
-    </div>
-    <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
-    </div>
-</div>
-{% endfor %}
+</section>
 {% endblock %}

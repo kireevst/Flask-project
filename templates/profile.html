@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <img src="{{ url_for('static', filename='images/avatar-default.png') }}" alt="Аватар">
+        </div>
+        <div class="profile-info">
+            <h1>{{ current_user.username }}</h1>
+            <p class="profile-email"><i class="fas fa-envelope"></i> {{ current_user.email }}</p>
+
+        </div>
+    </div>
+
+    <div class="profile-tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'articles')">Мои статьи</button>
+        <button class="tab-btn" onclick="openTab(event, 'games')">Мои игры</button>
+        <button class="tab-btn" onclick="openTab(event, 'settings')">Настройки</button>
+    </div>
+
+    <div id="articles" class="tab-content" style="display: block;">
+        <h2><i class="fas fa-pen"></i> Мои статьи</h2>
+        {% if articles %}
+            <div class="user-articles">
+                {% for article in articles %}
+                <div class="user-article {% if not article.is_approved %}pending{% endif %}">
+                    <h3><a href="{{ url_for('view_article', article_id=article.id) }}">{{ article.title }}</a></h3>
+                    <div class="article-meta">
+                        <span><i class="fas fa-calendar-alt"></i> {{ article.date_posted.strftime('%d.%m.%Y %H:%M') }}</span>
+                        <span class="status {% if article.is_approved %}approved{% else %}pending{% endif %}">
+                            {% if article.is_approved %}Одобрено{% else %}На модерации{% endif %}
+                        </span>
+                    </div>
+                    <div class="article-actions">
+                        <a href="{{ url_for('edit_article', article_id=article.id) }}" class="btn btn-sm btn-edit"><i class="fas fa-edit"></i> Редактировать</a>
+                        <a href="{{ url_for('delete_article', article_id=article.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту статью?')"><i class="fas fa-trash"></i> Удалить</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-content">
+                <p>Вы еще не написали ни одной статьи.</p>
+                <a href="{{ url_for('create_article') }}" class="btn btn-primary">Написать статью</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="games" class="tab-content">
+        <h2><i class="fas fa-gamepad"></i> Мои игры</h2>
+        {% if orders %}
+            <div class="user-games">
+                <div class="games-grid">
+                    {% for order in orders %}
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="{{ url_for('static', filename='uploads/' + order.game.image) }}" alt="{{ order.game.title }}">
+                        </div>
+                        <div class="game-info">
+                            <h3>{{ order.game.title }}</h3>
+                            <p class="game-meta">
+                                <span>Куплена: {{ order.order_date.strftime('%d.%m.%Y') }}</span>
+                                <span class="status {{ order.status|lower }}">{{ order.status }}</span>
+                            </p>
+                            <a href="{{ url_for('game_details', game_id=order.game.id) }}" class="btn btn-sm">Играть</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="no-content">
+                <p>У вас пока нет купленных игр.</p>
+                <a href="{{ url_for('catalog') }}" class="btn btn-primary">В каталог</a>
+            </div>
+        {% endif %}
+    </div>
+
+
+</div>
+
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tabbuttons;
+    
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    
+    tabbuttons = document.getElementsByClassName("tab-btn");
+    for (i = 0; i < tabbuttons.length; i++) {
+        tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+    }
+    
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+{% endblock %}

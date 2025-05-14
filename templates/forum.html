@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Форум{% endblock %}
+
+{% block content %}
+<div class="forum-page">
+    <div class="page-header">
+        <h1><i class="fas fa-comments"></i> Игровой форум</h1>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_article') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Написать статью</a>
+        {% endif %}
+    </div>
+
+    <div class="forum-controls">
+        <div class="forum-tabs">
+            <a href="{{ url_for('forum') }}" class="active">Все статьи</a>
+            <a href="#">Популярные</a>
+            <a href="#">Новые</a>
+        </div>
+        <div class="forum-search">
+            <form method="GET" action="#">
+                <input type="text" name="search" placeholder="Поиск статей...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="articles-list">
+        {% for article in articles %}
+        <div class="article-card {% if not article.is_approved %}pending{% endif %}">
+            <div class="article-header">
+                <h2><a href="{{ url_for('view_article', article_id=article.id) }}">{{ article.title }}</a></h2>
+                <div class="article-meta">
+                    <span><i class="fas fa-user"></i> {{ article.author.username }}</span>
+                    <span><i class="fas fa-calendar-alt"></i> {{ article.date_posted.strftime('%d.%m.%Y %H:%M') }}</span>
+                    {% if not article.is_approved %}
+                        <span class="status-pending"><i class="fas fa-clock"></i> На модерации</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="article-preview">
+                <p>{{ article.content|truncate(300) }}</p>
+            </div>
+            <div class="article-footer">
+                <a href="{{ url_for('view_article', article_id=article.id) }}" class="btn btn-outline">Читать далее</a>
+                <div class="article-stats">
+                    <span><i class="fas fa-comment"></i> 15</span>
+                    <span><i class="fas fa-eye"></i> 245</span>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-articles">
+            <p>Статьи пока отсутствуют. Будьте первым, кто поделится своим мнением!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

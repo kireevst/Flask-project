@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Управление играми{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="page-header">
+        <h1><i class="fas fa-gamepad"></i> Управление играми</h1>
+        <div class="page-actions">
+            <a href="{{ url_for('add_game') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить игру</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+    </div>
+    
+    <div class="admin-search">
+        <form method="GET" action="{{ url_for('admin_games') }}">
+            <input type="text" name="search" placeholder="Поиск игр...">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+    
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Платформа</th>
+                    <th>Жанр</th>
+                    <th>Цена</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>{{ game.id }}</td>
+                    <td><a href="{{ url_for('game_details', game_id=game.id) }}">{{ game.title }}</a></td>
+                    <td>{{ game.platform }}</td>
+                    <td>{{ game.genre }}</td>
+                    <td>{{ game.price }} руб.</td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_game', game_id=game.id) }}" class="btn btn-sm btn-edit"><i class="fas fa-edit"></i></a>
+                        <a href="{{ url_for('delete_game', game_id=game.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту игру?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="no-results">Игры не найдены</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <!-- Здесь будет пагинация -->
+        <a href="#" class="page-link active">1</a>
+        <a href="#" class="page-link">2</a>
+        <a href="#" class="page-link">3</a>
+    </div>
+</div>
+{% endblock %}

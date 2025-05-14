@@ -1,29 +1,17 @@
-import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
-from flask_login import UserMixin
-
-from .db_session import SqlAlchemyBase
-from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from datetime import datetime
+import os
 
-
-class User(SqlAlchemyBase, UserMixin):
-    __tablename__ = 'users'
-
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    email = sqlalchemy.Column(sqlalchemy.String,
-                              index=True, unique=True, nullable=True)
-    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                     default=datetime.datetime.now)
-    is_admin = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)
-    news = orm.relationship("News", back_populates='user')
-
-    def set_password(self, password):
-        self.hashed_password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.hashed_password, password)
+db = SQLAlchemy(app)
+class User(UserMixin, db.Model):
+    id = sqlalchemy.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    articles = db.relationship('Article', backref='author', lazy=True)
+    orders = db.relationship('Order', backref='customer', lazy=True)

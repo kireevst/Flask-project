@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование статьи{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="page-header">
+        <h1><i class="fas fa-edit"></i> Редактирование статьи</h1>
+        <div class="page-actions">
+            <a href="{{ url_for('admin_articles') }}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+    </div>
+    
+    <div class="admin-form-container">
+        <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="admin-form">
+            <div class="form-group">
+                <label for="title">Заголовок</label>
+                <input type="text" id="title" name="title" value="{{ article.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="content">Содержание</label>
+                <textarea id="content" name="content" rows="15" required>{{ article.content }}</textarea>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="is_approved" name="is_approved" {% if article.is_approved %}checked{% endif %}>
+                <label for="is_approved">Одобрено</label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a href="{{ url_for('admin_articles') }}" class="btn btn-outline">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
